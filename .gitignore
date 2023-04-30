@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# kaggle
+kaggle/
+
+# deep learning
+*.h5
+*.h6

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Axios 파일 업로드 기능</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <form method="POST" action="/app/catordog/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" id="file">
+        <button type="submit">파일 저장</button>
+    </form>
+    <br>
+    <br>
+    <p>ajax 방식입니다.</p>
+    <button id="btn-file-upload">파일 업로드</button>
+    <input
+      type="file"
+      id="myfile"
+      name="myfile"
+      style="display: none"
+      accept="image/*"
+    />
+    <br>
+    <div id="image_container"></div>
+
+    <script>
+      const inputFileUpload = document.querySelector("#myfile");
+
+      const fileupload = (event) => {
+
+        let reader = new FileReader();
+
+        reader.onload = function(event) {
+          let img = document.createElement("img");
+          img.setAttribute("src", event.target.result);
+          document.querySelector("div#image_container").appendChild(img);
+        };
+
+        reader.readAsDataURL(event.target.files[0]);
+
+        //alert('start');
+        const formData = new FormData();
+        formData.append("files", event.target.files[0]);
+
+        axios({
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          url: "/app/predict/", // 파일 업로드 요청 URL
+          method: "POST",
+          data: formData,
+        }).then((response) => {
+          inputFileUpload.value = "";
+          console.log(response)
+          alert(response.data.which + " 입니다.");
+        });
+      };
+
+      inputFileUpload.addEventListener("change", fileupload);
+
+      document
+        .querySelector("#btn-file-upload")
+        .addEventListener("click", () => {
+          inputFileUpload.click();
+        });
+    </script>
+  </body>
+</html>
